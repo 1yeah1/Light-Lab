@@ -2,15 +2,18 @@
 .venv/
 venv/
 
-# Python缓存
+# Python 缓存
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # VSCode本地配置
 .vscode/
-.idea/
 
-# 其他临时文件
+# Jupyter
+.ipynb_checkpoints/
+
+# 临时文件、日志
 *.log
-*.csv
-*.png
+*.tmp
