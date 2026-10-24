@@ -620,18 +620,22 @@ def _face_out_normal_at(point):
 
 
 def _add_normal(fig, point, normal, length=1.3, show_label=False):
-    """在界面上的光线作用点画一条虚线法线。"""
+    """在界面上的光线作用点画一条虚线法线（白色描边，保证压在棱镜上也能看清）。"""
+    xs = [point[0] - length * normal[0], point[0] + length * normal[0]]
+    ys = [point[1] - length * normal[1], point[1] + length * normal[1]]
     fig.add_trace(go.Scatter(
-        x=[point[0] - length * normal[0], point[0] + length * normal[0]],
-        y=[point[1] - length * normal[1], point[1] + length * normal[1]],
-        mode="lines",
+        x=xs, y=ys, mode="lines",
+        line=dict(color="white", width=5),
+        showlegend=False, hoverinfo="skip",
+    ))
+    fig.add_trace(go.Scatter(
+        x=xs, y=ys, mode="lines",
         line=dict(color="#455A64", width=2, dash="dash"),
         name="法线", showlegend=show_label, hoverinfo="skip",
     ))
     if show_label:
         fig.add_annotation(
-            x=point[0] + length * normal[0],
-            y=point[1] + length * normal[1],
+            x=xs[1], y=ys[1],
             text="法线", showarrow=False, xanchor="left",
             font=dict(size=11, color="#455A64", family=FONT_FAMILY),
         )
@@ -939,9 +943,12 @@ def draw_dispersion(entry_t: float = 0.5, show_labels: bool = True):
     # 白光入射
     fig.add_trace(go.Scatter(
         x=[start[0], entry[0]], y=[start[1], entry[1]],
-        mode="lines", line=dict(color="#EEEEEE", width=5),
+        mode="lines", line=dict(color="#BDBDBD", width=5),
         name="白光",
     ))
+
+    # 两个界面上的法线：说明「进玻璃向法线偏折、出玻璃远离法线偏折」
+    _add_normal(fig, entry, (-0.866, 0.5), show_label=True)
 
     ends = {}
     for name, color, n_glass in _SPECTRUM:
@@ -964,6 +971,7 @@ def draw_dispersion(entry_t: float = 0.5, show_labels: bool = True):
     # 出射处的部分反射（以绿光为例，画一段虚线）
     g_path, q, _, _ = _trace_through_prism(entry, d_in, 1.535)
     if len(g_path) >= 2:
+        _add_normal(fig, q, (0.866, 0.5))
         d_inner = _unit((g_path[-1][0] - g_path[-2][0], g_path[-1][1] - g_path[-2][1]))
         normal = (0.866, 0.5)
         d_refl = _unit((d_inner[0] - 2 * _dot(d_inner, normal) * normal[0],
@@ -973,6 +981,21 @@ def draw_dispersion(entry_t: float = 0.5, show_labels: bool = True):
             mode="lines", line=dict(color="#9E9E9E", width=1.5, dash="dot"),
             name="反射光（部分）",
         ))
+
+    if show_labels:
+        stage_font = dict(size=13, color="#37474F", family=FONT_FAMILY)
+        fig.add_annotation(
+            x=-6.4, y=2.7, text="① 白光射入玻璃：向法线偏折",
+            showarrow=False, xanchor="left", font=stage_font,
+        )
+        fig.add_annotation(
+            x=-0.9, y=2.6, text="② 在玻璃里：七种颜色渐渐分开",
+            showarrow=False, xanchor="left", font=stage_font,
+        )
+        fig.add_annotation(
+            x=2.1, y=-3.8, text="③ 出玻璃：远离法线偏折，整体向底部",
+            showarrow=False, xanchor="left", font=stage_font,
+        )
 
     if "红" in ends:
         fig.add_annotation(

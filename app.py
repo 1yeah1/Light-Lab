@@ -62,9 +62,10 @@ TEXTS = {
     "explain_refraction_glass": "光从空气斜射入玻璃时，折射角比入射角小，而且比射入水中时更小。",
     "explain_mirror_game": "调整平面镜的角度，让激光经过多次反射后命中靶心！",
     "prism_glass_title": "🔷 全透三棱镜：只在两个界面折射",
-    "prism_partial_title": "� 非全透三棱镜：折射 + 反射",
+    "prism_partial_title": "🔸 非全透三棱镜：折射 + 反射",
     "explain_prism_compare": "**全透三棱镜**：入射光线从空气进入三棱镜时发生折射，向法线偏折；到达另一侧界面时，再次发生折射，出射光线偏离原入射方向，整体向三棱镜底部偏折。**非全透三棱镜**：入射光线进入三棱镜后，一部分光发生反射，另一部分光发生折射并继续传播；光线到达其他界面时，可能再次发生反射、折射或被吸收，最终形成多条不同方向的光路，且光强逐渐减弱。",
-    "explain_dispersion": "白光其实由七种颜色的光组成。它们在玻璃里的折射程度各不相同：紫光偏折最大，红光偏折最小，所以白光穿过三棱镜后被分开，形成彩色光带，这就是色散。出射时还有一小部分光被反射回棱镜里（灰色虚线）。牛顿正是用三棱镜发现了白光的秘密。",
+    "explain_dispersion": "白光看起来是白色的，其实里面藏着**红、橙、黄、绿、蓝、靛、紫**七种颜色的光。白光斜着射进三棱镜，会先后发生**两次折射**：进玻璃时向法线偏折，出玻璃时远离法线偏折。不同颜色的光在玻璃里跑得快慢不一样，红光拐弯最少，紫光拐弯最多。两次折射以后，七种颜色越分越开，形成一条彩色光带：**红色在最上面，紫色在最下面**，整体向三棱镜的底部偏折。这就是光的色散。三百多年前，牛顿正是用三棱镜发现了白光的这个秘密。",
+    "dispersion_tip": "紫光比红光多偏折约 {diff:.0f}°，所以紫色排在下面、红色排在上面。",
     "medium_water": "水",
     "medium_glass": "玻璃",
 }
@@ -335,6 +336,7 @@ with tab_play:
         col1.metric(TEXTS["metric_incident"], f"{inc_x:.0f}°")
         col2.metric(TEXTS["metric_red_out"], f"{red_x:.0f}°")
         col3.metric(TEXTS["metric_violet_out"], f"{violet_x:.0f}°")
+        st.caption(TEXTS["dispersion_tip"].format(diff=violet_x - red_x))
 
         st.info(TEXTS["explain_dispersion"])
 
